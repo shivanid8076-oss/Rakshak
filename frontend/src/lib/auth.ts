@@ -20,13 +20,20 @@ export function getRole(): Role | null {
   if (r && ["admin", "risk_manager", "fraud_analyst", "investigator"].includes(r)) {
     return r as Role;
   }
-  return "admin";
+  return null;
 }
 
 export function setRole(role: Role) {
-  window.localStorage.setItem("fs_role", role);
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem("fs_role", role);
+  }
 }
 
 export function clearRole() {
-  window.localStorage.removeItem("fs_role");
+  if (typeof window !== "undefined") {
+    window.localStorage.removeItem("fs_role");
+    window.sessionStorage.removeItem("fs_role");
+    window.sessionStorage.removeItem("fs_selected_desk");
+  }
 }
+

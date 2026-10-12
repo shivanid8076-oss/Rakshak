@@ -104,6 +104,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const logout = () => {
     clearRole();
+    setRoleState(null);
+    setMenuOpen(false);
     navigate({ to: "/login" });
   };
 
@@ -277,6 +279,16 @@ export function AppShell({ children }: { children: ReactNode }) {
                 Inference: 34ms · Mumbai-01
               </div>
             </div>
+
+            {/* Direct Logout / Switch Desk Button in Sidebar */}
+            <button
+              type="button"
+              onClick={logout}
+              className="w-full mt-3 flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-all cursor-pointer"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span>Log Out ({roleLabel})</span>
+            </button>
           </div>
         </aside>
 
