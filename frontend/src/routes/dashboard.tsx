@@ -15,10 +15,12 @@ import {
   RefreshCw,
   Sparkles,
   Layers,
+  FileSpreadsheet,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CyberBackground3D } from "@/components/CyberBackground3D";
 import { getDashboardSummary, listTransactions, submitTransaction } from "@/lib/api";
+import { CSVUploadModal } from "@/components/CSVUploadModal";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Summary {
@@ -126,6 +128,7 @@ function Dashboard() {
 
   // ── Simulator Modal State ──────────────────────────────────────────────────
   const [isSimulateOpen, setIsSimulateOpen] = useState(false);
+  const [isCSVUploadOpen, setIsCSVUploadOpen] = useState(false);
   const [simSender, setSimSender] = useState("rohit@okhdfcbank");
   const [simReceiver, setSimReceiver] = useState("swiggy@icici");
   const [simAmount, setSimAmount] = useState("250");
@@ -363,6 +366,15 @@ function Dashboard() {
               >
                 <Zap className="h-3.5 w-3.5 text-cyan-200 animate-pulse" />
                 <span>+ Simulate Transaction</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsCSVUploadOpen(true)}
+                className="relative inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-sans font-bold bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-500 hover:from-violet-500 hover:to-fuchsia-400 text-white shadow-md shadow-violet-500/20 hover:shadow-violet-500/35 transition-all duration-200 active:scale-95 cursor-pointer"
+              >
+                <FileSpreadsheet className="h-3.5 w-3.5 text-violet-200" />
+                <span>📄 CSV Batch Upload</span>
               </button>
             </div>
           </div>

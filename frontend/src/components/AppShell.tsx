@@ -104,9 +104,14 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const logout = () => {
     clearRole();
-    setRoleState(null);
-    setMenuOpen(false);
-    navigate({ to: "/login" });
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.removeItem("fs_role");
+        window.sessionStorage.removeItem("fs_role");
+        window.sessionStorage.removeItem("fs_selected_desk");
+      } catch (err) {}
+      window.location.href = "/login";
+    }
   };
 
   // Strictly block direct rendering if unauthenticated
@@ -124,12 +129,16 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden mb-5">
             <div className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 animate-pulse w-3/4" />
           </div>
-          <Link
-            to="/login"
-            className="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-400 to-sky-500 text-slate-950 font-bold text-xs shadow-md transition-transform hover:scale-[1.02]"
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = "/login";
+            }}
+            className="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-400 to-sky-500 text-slate-950 font-bold text-xs shadow-md transition-transform hover:scale-[1.02] cursor-pointer"
           >
             <span>Proceed to Login</span>
-          </Link>
+          </button>
+
         </div>
       </div>
     );
@@ -168,6 +177,17 @@ export function AppShell({ children }: { children: ReactNode }) {
             <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-blue-500 rounded-full ring-2 ring-white dark:ring-[#0c1220]" />
           </button>
           <div className="h-4 w-[1px] bg-slate-200 dark:bg-white/10 mx-1 hidden sm:block" />
+          {/* Direct Visible Logout Button */}
+          <button
+            type="button"
+            onClick={logout}
+            title="Log out of session"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/25 transition-all cursor-pointer active:scale-95 shadow-2xs"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Logout</span>
+          </button>
+
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setMenuOpen((o) => !o)}

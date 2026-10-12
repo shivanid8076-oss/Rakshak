@@ -10,6 +10,8 @@ import {
   Sparkles,
   Lock,
   Zap,
+  FileSpreadsheet,
+  LogOut,
 } from "lucide-react";
 import { HolographicShield } from "../components/HolographicShield";
 import { LiveThreatStream } from "../components/LiveThreatStream";
@@ -19,12 +21,14 @@ import { OperationalDesksSection } from "../components/OperationalDesksSection";
 import { CyberBackground3D } from "../components/CyberBackground3D";
 import { getRole, ROLE_HOME, type Role } from "../lib/auth";
 import { TransactionSimulatorModal } from "../components/TransactionSimulatorModal";
+import { CSVUploadModal } from "../components/CSVUploadModal";
 
 export const Route = createFileRoute("/")({ component: Landing });
 
 function Landing() {
   const [activeRole, setActiveRole] = useState<Role | null>(null);
   const [isSimulateOpen, setIsSimulateOpen] = useState(false);
+  const [isCSVUploadOpen, setIsCSVUploadOpen] = useState(false);
 
   useEffect(() => {
     setActiveRole(getRole());
@@ -142,6 +146,27 @@ function Landing() {
               <span>{activeRole ? "Open Console" : "Get Started"}</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
+
+            {/* Logout button if session active */}
+            {activeRole && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    window.localStorage.removeItem("fs_role");
+                    window.sessionStorage.removeItem("fs_role");
+                    window.sessionStorage.removeItem("fs_selected_desk");
+                    window.location.href = "/login";
+                  }
+                }}
+                className="px-3.5 py-2 rounded-full bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:text-rose-300 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 shadow-2xs"
+                title="Log out of current workspace"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Logout</span>
+              </button>
+            )}
+
           </div>
         </div>
       </header>
@@ -180,6 +205,15 @@ function Landing() {
               >
                 <Zap className="h-4 w-4 text-cyan-400 animate-pulse" />
                 <span>⚡ Simulate Live Transaction</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsCSVUploadOpen(true)}
+                className="inline-flex items-center gap-2 border border-violet-400/40 bg-violet-950/60 hover:bg-violet-900/70 text-violet-300 hover:text-white font-bold rounded-full px-6 py-3 text-sm shadow-[0_0_20px_rgba(139,92,246,0.3)] transition-all hover:scale-105 active:scale-[0.98] cursor-pointer"
+              >
+                <FileSpreadsheet className="h-4 w-4 text-violet-400" />
+                <span>📄 Upload CSV Batch</span>
               </button>
 
               <Link
@@ -539,6 +573,12 @@ function Landing() {
       <TransactionSimulatorModal
         isOpen={isSimulateOpen}
         onClose={() => setIsSimulateOpen(false)}
+      />
+
+      {/* ── CSV Batch Upload Modal ── */}
+      <CSVUploadModal
+        isOpen={isCSVUploadOpen}
+        onClose={() => setIsCSVUploadOpen(false)}
       />
     </div>
   );
