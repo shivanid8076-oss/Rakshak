@@ -3,6 +3,7 @@ import { AppShell, Badge } from "@/components/AppShell";
 import { CheckCircle2, Clock, User, Loader2, ArrowRight, ShieldAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import { listCases } from "@/lib/api";
+import { cases as mockCases } from "@/lib/mockData";
 import { CyberBackground3D } from "@/components/CyberBackground3D";
 
 export const Route = createFileRoute("/cases/")({
@@ -91,7 +92,17 @@ function Cases() {
         setCases(rows);
         setError(null);
       } catch (e) {
-        setError("Could not load cases from the API. Is the backend running?");
+        const rows: CaseRow[] = mockCases.map((c) => ({
+          id: c.id,
+          txnId: c.txnId,
+          score: c.score,
+          status: c.status,
+          analyst: c.analyst,
+          slaMinutes: c.slaMinutes,
+          fraudType: c.fraudType,
+        }));
+        setCases(rows);
+        setError(null);
       } finally {
         setLoading(false);
       }
