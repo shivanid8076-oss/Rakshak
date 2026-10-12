@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Sparkles,
   Lock,
+  Zap,
 } from "lucide-react";
 import { HolographicShield } from "../components/HolographicShield";
 import { LiveThreatStream } from "../components/LiveThreatStream";
@@ -17,11 +18,13 @@ import { FraudShieldEmblem } from "../components/FraudShieldLogo";
 import { OperationalDesksSection } from "../components/OperationalDesksSection";
 import { CyberBackground3D } from "../components/CyberBackground3D";
 import { getRole, ROLE_HOME, type Role } from "../lib/auth";
+import { TransactionSimulatorModal } from "../components/TransactionSimulatorModal";
 
 export const Route = createFileRoute("/")({ component: Landing });
 
 function Landing() {
   const [activeRole, setActiveRole] = useState<Role | null>(null);
+  const [isSimulateOpen, setIsSimulateOpen] = useState(false);
 
   useEffect(() => {
     setActiveRole(getRole());
@@ -113,6 +116,16 @@ function Landing() {
               <ThemeToggle />
             </div>
 
+            {/* Simulate Transaction Button */}
+            <button
+              type="button"
+              onClick={() => setIsSimulateOpen(true)}
+              className="px-4 py-2 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-bold shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all hover:scale-105 active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+            >
+              <Zap className="h-3.5 w-3.5 text-cyan-200 animate-pulse" />
+              <span>Simulate Transaction</span>
+            </button>
+
             {/* Login / Workspace Button */}
             <Link
               to={defaultConsolePath}
@@ -160,11 +173,20 @@ function Landing() {
 
             {/* CTA Buttons */}
             <div className="mt-8 flex flex-wrap items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setIsSimulateOpen(true)}
+                className="inline-flex items-center gap-2 border border-cyan-400/40 bg-cyan-950/60 hover:bg-cyan-900/70 text-cyan-300 hover:text-white font-bold rounded-full px-6 py-3 text-sm shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all hover:scale-105 active:scale-[0.98] cursor-pointer"
+              >
+                <Zap className="h-4 w-4 text-cyan-400 animate-pulse" />
+                <span>⚡ Simulate Live Transaction</span>
+              </button>
+
               <Link
                 to={defaultConsolePath}
                 className="inline-flex items-center gap-2.5 bg-gradient-to-r from-cyan-400 to-sky-500 hover:from-cyan-300 hover:to-sky-400 text-slate-950 font-bold rounded-full px-6 py-3 text-sm shadow-[0_0_20px_rgba(56,189,248,0.4)] transition-all hover:scale-105 active:scale-[0.98]"
               >
-                <span>{activeRole ? "Enter Console" : "Get Started"}</span>
+                <span>{activeRole ? "Enter Console" : "Open Console"}</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -512,6 +534,12 @@ function Landing() {
           <div>© {new Date().getFullYear()} All rights reserved. NPCI UPI 2.0 Ingress Specification.</div>
         </div>
       </footer>
+
+      {/* ── Transaction Simulator Modal ── */}
+      <TransactionSimulatorModal
+        isOpen={isSimulateOpen}
+        onClose={() => setIsSimulateOpen(false)}
+      />
     </div>
   );
 }

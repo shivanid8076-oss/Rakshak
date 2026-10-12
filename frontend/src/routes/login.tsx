@@ -11,6 +11,7 @@ import {
   BarChart3,
   ShieldCheck,
   Check,
+  Zap,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getRole, setRole, ROLE_HOME, type Role } from "@/lib/auth";
@@ -439,6 +440,18 @@ function Login() {
                 <ArrowRight className="h-3.5 w-3.5" />
               </>
             )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setRole("fraud_analyst");
+              navigate({ to: "/dashboard" });
+            }}
+            className="w-full py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-600/20 active:scale-[0.99]"
+          >
+            <Zap className="h-3.5 w-3.5 text-emerald-200 animate-pulse" />
+            <span>⚡ Instant Demo Access (Open Dashboard)</span>
           </button>
 
           {/* Security Compliance Footer */}
