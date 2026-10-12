@@ -114,7 +114,7 @@ def _seed_in_memory_data():
             'anomaly_score': 97.2,
             'status': 'CLOSED',
             'case_id': 'CASE-1003',
-            'disposition': 'CONFIRMED_FRAUD',
+            'disposition': 'TRUE_FRAUD',
             'assigned_analyst': 'analyst_1',
             'sla_deadline': (now - timedelta(minutes=5)).isoformat()
         },

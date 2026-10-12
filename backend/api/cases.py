@@ -16,6 +16,32 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
+def _parse_dt(val) -> Optional[datetime]:
+    if isinstance(val, datetime):
+        return val
+    if isinstance(val, str):
+        try:
+            return datetime.fromisoformat(val)
+        except Exception:
+            return None
+    return None
+
+def _parse_disposition(val):
+    if not val:
+        return None
+    try:
+        return Disposition(val)
+    except Exception:
+        if str(val).upper() in ("CONFIRMED_FRAUD", "FRAUD"):
+            return Disposition.TRUE_FRAUD
+        return None
+
+def _parse_status(val):
+    try:
+        return CaseStatus(val)
+    except Exception:
+        return CaseStatus.OPEN
+
 @router.get("/cases", response_model=List[CaseResponse])
 async def list_cases(
     status:   Optional[str] = Query(None, example="OPEN"),
@@ -28,11 +54,11 @@ async def list_cases(
             case_id          = str(r['case_id']),
             txn_id           = str(r['txn_id']),
             risk_score       = float(r.get('risk_score', 0)),
-            status           = r.get('status', 'OPEN'),
+            status           = _parse_status(r.get('status')),
             assigned_analyst = r.get('assigned_analyst'),
-            sla_deadline     = r.get('sla_deadline'),
-            disposition      = r.get('disposition'),
-            created_at       = r.get('created_at', datetime.utcnow())
+            sla_deadline     = _parse_dt(r.get('sla_deadline')),
+            disposition      = _parse_disposition(r.get('disposition')),
+            created_at       = _parse_dt(r.get('created_at')) or datetime.utcnow()
         )
         for r in rows
     ]
@@ -47,11 +73,11 @@ async def get_case(case_id: str):
                 case_id          = str(r['case_id']),
                 txn_id           = str(r['txn_id']),
                 risk_score       = float(r.get('risk_score', 0)),
-                status           = r.get('status', 'OPEN'),
+                status           = _parse_status(r.get('status')),
                 assigned_analyst = r.get('assigned_analyst'),
-                sla_deadline     = r.get('sla_deadline'),
-                disposition      = r.get('disposition'),
-                created_at       = r.get('created_at', datetime.utcnow())
+                sla_deadline     = _parse_dt(r.get('sla_deadline')),
+                disposition      = _parse_disposition(r.get('disposition')),
+                created_at       = _parse_dt(r.get('created_at')) or datetime.utcnow()
             )
     raise HTTPException(status_code=404, detail="Case not found")
 
