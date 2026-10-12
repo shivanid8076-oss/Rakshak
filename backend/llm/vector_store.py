@@ -1,3 +1,5 @@
+import logging
+
 try:
     import chromadb
 except ImportError:
