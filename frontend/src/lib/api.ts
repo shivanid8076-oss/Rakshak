@@ -1,5 +1,8 @@
 // ── RAKSHAK API Client ─────────────────────────────────────────────────
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
+const BASE_URL =
+  (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/+$/, "") ||
+  (import.meta.env.VITE_API_URLl as string | undefined)?.replace(/\/+$/, "") ||
+  "https://rakshak-backend-4aph.onrender.com/api/v1";
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
