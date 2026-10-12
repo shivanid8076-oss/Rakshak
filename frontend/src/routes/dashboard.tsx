@@ -3,6 +3,7 @@ import { AppShell, Badge } from "@/components/AppShell";
 import { ShieldCheck, TrendingUp, AlertTriangle, ShieldAlert, ArrowUpRight, Activity } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CyberBackground3D } from "@/components/CyberBackground3D";
+import { getDashboardSummary, listTransactions } from "@/lib/api";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Summary {
@@ -111,27 +112,23 @@ function Dashboard() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [sumRes, txnRes] = await Promise.all([
-          fetch("/api/v1/analytics/summary"),
-          fetch("/api/v1/transactions?limit=10"),
+        const [sumData, txnData] = await Promise.all([
+          getDashboardSummary().catch(() => null),
+          listTransactions(10).catch(() => null),
         ]);
 
-        if (sumRes.ok) {
-          const sumData = await sumRes.json();
-          setSummary(sumData);
+        if (sumData) {
+          setSummary(sumData as Summary);
           setApiOnline(true);
         }
 
-        if (txnRes.ok) {
-          const txnData = await txnRes.json();
-          if (Array.isArray(txnData) && txnData.length > 0) {
-            setTransactions(txnData);
-            setLiveAlerts(
-              txnData
-                .filter((t: Transaction) => t.decision === "BLOCK" || t.decision === "REVIEW")
-                .slice(0, 4),
-            );
-          }
+        if (Array.isArray(txnData) && txnData.length > 0) {
+          setTransactions(txnData as Transaction[]);
+          setLiveAlerts(
+            (txnData as Transaction[])
+              .filter((t: Transaction) => t.decision === "BLOCK" || t.decision === "REVIEW")
+              .slice(0, 4),
+          );
         }
       } catch {
         setApiOnline(false);
